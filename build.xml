@@ -1,0 +1,70 @@
+<project>
+	<rule>
+		<name>default</name>
+		<compiler>g++</compiler>
+		<sources>
+			<source>example.cc</source>
+		</sources>
+		<!--path>
+			<source></source>
+			<include></include>
+			<library></library>
+		</path-->
+		<libs>
+			<lib>SDL</lib>
+		</libs>
+		<defines>
+			<define>TYPE=\"DEFAULT\"</define>
+		</defines>
+		<flags>
+			<flag>-O2 -pipe</flag>
+			<flag>-g</flag>
+
+			<cflag>-pedantic -Wall -Wextra -Winline -Wlogical-op -Wc++11-compat -Wparentheses -Weffc++</cflag>
+			<cflag>-Wno-multichar -Wno-write-strings -Wno-pragmas -Wno-attributes -Wstrict-aliasing -Wshadow</cflag>
+			<cflag>-march=native -mtune=native</cflag>
+			<cflag>-std=c++11 -fno-exceptions -fno-rtti</cflag>
+		</flags>
+		<binary>
+			<name>example</name>
+			<type>exe</type>
+		</binary>
+		<message>Default Build Done</message>
+	</rule>
+
+	<rule>
+		<name>release</name>
+		<compiler>g++</compiler>
+		<sources>
+			<source>example.cc</source>
+		</sources>
+		<libs>
+			<lib>SDL</lib>
+		</libs>
+		<defines>
+			<define>TYPE=\"RELEASE\"</define>
+		</defines>
+		<flags>
+			<flag>-O2 -pipe -falign-loops -fomit-frame-pointer -flto -fwhole-program</flag>
+			<flag>-s</flag>
+
+			<cflag>-Wmissing-declarations -Wredundant-decls</cflag>
+			<cflag>-march=native -mtune=native -mstackrealign</cflag>
+			<cflag>-std=c++11 -fno-exceptions -fno-rtti</cflag>
+
+			<lflag>-Wl,-s</lflag>
+		</flags>
+		<binary>
+			<name>example</name>
+			<type>exe</type>
+		</binary>
+		<action>strip -s -R .note -R .comment -R .gnu.version example</action>
+		<message>Release Build Done</message>
+	</rule>
+
+	<rule>
+		<name>install</name>
+		<action>cp example /usr/bin</action>
+	</rule>
+</project>
+

@@ -1,0 +1,112 @@
+#!/bin/sh
+
+# smmn - summon 1.0 (mini xslt build.xml-processor)
+# Christian Himpe 2014 ( http://atcrosslevel.de )
+# released under 2-clause BSD license
+
+# create argument
+P="$1"
+if [ -z $P ]; then
+	P="default"
+fi
+
+# xsl stylesheet
+XSL="<?xml version=\"1.0\" encoding=\"utf-8\" ?>
+<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">
+	<xsl:output method=\"text\" encoding=\"utf-8\"/>
+	<xsl:template match=\"project\">
+		<!--xsl:text>#!/bin/sh&#10;</xsl:text-->
+		<xsl:for-each select=\"rule\">
+			<xsl:if test=\"name='$P'\">
+				<xsl:for-each select=\"sources/source\">
+					<xsl:value-of select=\"../../compiler\"/>
+					<xsl:text> </xsl:text>
+					<xsl:if test=\"../../path/source!=''\">
+						<xsl:value-of select=\"../../path/source\"/>
+						<xsl:text>/</xsl:text>
+					</xsl:if>
+					<xsl:value-of select=\".\"/>
+					<xsl:text> -c</xsl:text>
+					<xsl:for-each select=\"../../path/include\">
+						<xsl:if test=\".!=''\">
+							<xsl:text> -I</xsl:text>
+							<xsl:value-of select=\".\"/>
+						</xsl:if>
+					</xsl:for-each>
+					<xsl:for-each select=\"../../defines/define\">
+						<xsl:text> -D</xsl:text>
+						<xsl:value-of select=\".\"/>
+					</xsl:for-each>
+					<xsl:for-each select=\"../../flags/cflag\">
+						<xsl:text> </xsl:text>
+						<xsl:value-of select=\".\"/>
+					</xsl:for-each>
+					<xsl:for-each select=\"../../flags/flag\">
+						<xsl:text> </xsl:text>
+						<xsl:value-of select=\".\"/>
+					</xsl:for-each>
+					<xsl:text> -o .</xsl:text>
+					<xsl:value-of select=\".\"/>
+					<xsl:text>.o </xsl:text>
+					<xsl:text>&#10;</xsl:text>
+				</xsl:for-each>
+				<xsl:text> &#38;&#38; </xsl:text>
+				<xsl:value-of select=\"compiler\"/>
+				<xsl:text> </xsl:text>
+				<xsl:for-each select=\"sources/source\">
+					<xsl:text>.</xsl:text>
+					<xsl:value-of select=\".\"/>
+					<xsl:text>.o</xsl:text>
+				</xsl:for-each>
+				<xsl:for-each select=\"path/library\">
+					<xsl:if test=\".!=''\">
+						<xsl:text> -L</xsl:text>
+						<xsl:value-of select=\".\"/>
+					</xsl:if>
+				</xsl:for-each>
+				<xsl:for-each select=\"libs/lib\">
+					<xsl:text> -l</xsl:text>
+					<xsl:value-of select=\".\"/>
+				</xsl:for-each>
+				<xsl:for-each select=\"flags/lflag\">
+					<xsl:text> </xsl:text>
+					<xsl:value-of select=\".\"/>
+				</xsl:for-each>
+				<xsl:for-each select=\"flags/flag\">
+					<xsl:text> </xsl:text>
+					<xsl:value-of select=\".\"/>
+				</xsl:for-each>
+				<xsl:text> -o </xsl:text>
+				<xsl:value-of select=\"binary/name\"/>
+				<xsl:for-each select=\"action\">
+					<xsl:text> &#38;&#38; </xsl:text>
+					<xsl:value-of select=\".\"/>
+				</xsl:for-each>
+				<xsl:text> &#38;&#38; echo &#34;</xsl:text>
+				<xsl:value-of select=\"message\"/>
+				<xsl:text>&#34;</xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:template>
+</xsl:stylesheet>"
+
+# check for xsltproc
+if ! command -v xsltproc &>/dev/null; then
+	echo "No xsltproc found!"
+	exit 1;
+fi
+
+# check for build.xml
+if [ `ls build.xml` != 'build.xml' ]; then
+	echo "No build.xml found!"
+	exit 1;
+fi
+
+# generate and execute commands from build.xml
+SMMN=`echo $XSL | xsltproc - build.xml`
+echo $SMMN
+eval $SMMN
+
+# clean up
+#rm -f .*.o
+
