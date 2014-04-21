@@ -50,39 +50,42 @@ XSL="<?xml version=\"1.0\" encoding=\"utf-8\" ?>
 					<xsl:text>.o </xsl:text>
 					<xsl:text>&#10;</xsl:text>
 				</xsl:for-each>
-				<xsl:text> &#38;&#38; </xsl:text>
-				<xsl:value-of select=\"compiler\"/>
-				<xsl:text> </xsl:text>
-				<xsl:for-each select=\"sources/source\">
-					<xsl:text>.</xsl:text>
-					<xsl:value-of select=\".\"/>
-					<xsl:text>.o</xsl:text>
-				</xsl:for-each>
-				<xsl:for-each select=\"path/library\">
-					<xsl:if test=\".!=''\">
-						<xsl:text> -L</xsl:text>
-						<xsl:value-of select=\".\"/>
-					</xsl:if>
-				</xsl:for-each>
-				<xsl:for-each select=\"libs/lib\">
-					<xsl:text> -l</xsl:text>
-					<xsl:value-of select=\".\"/>
-				</xsl:for-each>
-				<xsl:for-each select=\"flags/lflag\">
-					<xsl:text> </xsl:text>
-					<xsl:value-of select=\".\"/>
-				</xsl:for-each>
-				<xsl:for-each select=\"flags/flag\">
-					<xsl:text> </xsl:text>
-					<xsl:value-of select=\".\"/>
-				</xsl:for-each>
-				<xsl:text> -o </xsl:text>
-				<xsl:value-of select=\"binary/name\"/>
-				<xsl:for-each select=\"action\">
+				<xsl:if test=\"binary!=''\">
 					<xsl:text> &#38;&#38; </xsl:text>
+					<xsl:value-of select=\"compiler\"/>
+					<xsl:text> </xsl:text>
+					<xsl:for-each select=\"sources/source\">
+						<xsl:text>.</xsl:text>
+						<xsl:value-of select=\".\"/>
+						<xsl:text>.o</xsl:text>
+					</xsl:for-each>
+					<xsl:for-each select=\"path/library\">
+						<xsl:if test=\".!=''\">
+							<xsl:text> -L</xsl:text>
+							<xsl:value-of select=\".\"/>
+						</xsl:if>
+					</xsl:for-each>
+					<xsl:for-each select=\"libs/lib\">
+						<xsl:text> -l</xsl:text>
+						<xsl:value-of select=\".\"/>
+					</xsl:for-each>
+					<xsl:for-each select=\"flags/lflag\">
+						<xsl:text> </xsl:text>
+						<xsl:value-of select=\".\"/>
+					</xsl:for-each>
+					<xsl:for-each select=\"flags/flag\">
+						<xsl:text> </xsl:text>
+						<xsl:value-of select=\".\"/>
+					</xsl:for-each>
+					<xsl:text> -o </xsl:text>
+					<xsl:value-of select=\"binary/name\"/>
+					<xsl:text> &#38;&#38; </xsl:text>
+				</xsl:if>
+				<xsl:for-each select=\"action\">
 					<xsl:value-of select=\".\"/>
+					<xsl:text> &#38;&#38; </xsl:text>
 				</xsl:for-each>
-				<xsl:text> &#38;&#38; echo &#34;</xsl:text>
+				<xsl:text> echo &#34;</xsl:text>
 				<xsl:value-of select=\"message\"/>
 				<xsl:text>&#34;</xsl:text>
 			</xsl:if>
